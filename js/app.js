@@ -7,6 +7,19 @@ let settings = {
   showCollocations:true, showSynonyms:true, showAntonyms:true, showNote:true
 };
 function fsrsOpts(){ return {retention: settings.desiredRetention||0.9, fuzz: settings.enableFuzz!==false}; }
+// Shared 4-grade rating row (Again/Hard/Good/Easy) for Learn & Review flashcards,
+// with a preview of the resulting review interval under each button.
+function rateRowHTML(idPrefix, callbackName, w){
+  const preview = FSRS.previewIntervals(w, Date.now(), fsrsOpts());
+  const eta = g => esc(FSRS.formatInterval(preview[g]));
+  return `
+    <div class="rate-row" id="${idPrefix}RateRow" style="display:none;">
+      <button class="rate-btn again" id="${idPrefix}AgainBtn" disabled onclick="${callbackName}(1)">Again<span class="sub">${eta(1)}</span></button>
+      <button class="rate-btn hard" id="${idPrefix}HardBtn" disabled onclick="${callbackName}(2)">Hard<span class="sub">${eta(2)}</span></button>
+      <button class="rate-btn good" id="${idPrefix}GoodBtn" disabled onclick="${callbackName}(3)">Good<span class="sub">${eta(3)}</span></button>
+      <button class="rate-btn easy" id="${idPrefix}EasyBtn" disabled onclick="${callbackName}(4)">Easy<span class="sub">${eta(4)}</span></button>
+    </div>`;
+}
 let dailyLog = {}; // { 'YYYY-MM-DD': {reviews:n, learned:n, correct:n, grades:{1,2,3,4}, timeMs:n} }
 let lastActionTime = 0;
 let chartRange = 7;
@@ -503,12 +516,7 @@ function drawLearnCard(){
         </div>
       </div>
     </div>
-    <div class="rate-row" id="learnRateRow" style="display:none;">
-      <button class="rate-btn again" id="learnAgainBtn" disabled onclick="learnRate(1)">Again</button>
-      <button class="rate-btn hard" id="learnHardBtn" disabled onclick="learnRate(2)">Hard</button>
-      <button class="rate-btn good" id="learnGoodBtn" disabled onclick="learnRate(3)">Good</button>
-      <button class="rate-btn easy" id="learnEasyBtn" disabled onclick="learnRate(4)">Easy</button>
-    </div>
+    ${rateRowHTML('learn', 'learnRate', w)}
   `;
 }
 function flipLearn(){
@@ -727,12 +735,7 @@ function drawFlashcardReview(w, area){
         </div>
       </div>
     </div>
-    <div class="rate-row" id="reviewRateRow" style="display:none;">
-      <button class="rate-btn again" id="reviewAgainBtn" disabled onclick="gradeReviewWord(1)">Again</button>
-      <button class="rate-btn hard" id="reviewHardBtn" disabled onclick="gradeReviewWord(2)">Hard</button>
-      <button class="rate-btn good" id="reviewGoodBtn" disabled onclick="gradeReviewWord(3)">Good</button>
-      <button class="rate-btn easy" id="reviewEasyBtn" disabled onclick="gradeReviewWord(4)">Easy</button>
-    </div>
+    ${rateRowHTML('review', 'gradeReviewWord', w)}
   `;
 }
 function flipReview(){
