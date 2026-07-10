@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Vocab Sprout — Học từ vựng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <nav class="nav" id="nav">
+    <div class="brand" style="display:none;">🌱 Vocab Sprout</div>
+    <button class="nav-btn active" data-tab="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      <span>Trang chủ</span>
+    </button>
+    <button class="nav-btn" data-tab="learn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 4-9 4-9-4 9-4z"/><path d="M3 12l9 4 9-4"/><path d="M3 16l9 4 9-4"/></svg>
+      <span>Chủ đề</span>
+    </button>
+    <button class="nav-btn" data-tab="review">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2.1l4 4-4 4"/><path d="M3 12.1v-2a4 4 0 014-4h14"/><path d="M7 21.9l-4-4 4-4"/><path d="M21 11.9v2a4 4 0 01-4 4H3"/></svg>
+      <span>Ôn tập</span>
+    </button>
+    <button class="nav-btn" data-tab="stats">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+      <span>Thống kê</span>
+    </button>
+    <button class="nav-btn" data-tab="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 008.6 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H2a2 2 0 010-4h.09A1.65 1.65 0 003.6 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H8a1.65 1.65 0 001-1.51V2a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V8a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Cài đặt</span>
+    </button>
+  </nav>
+
+  <!-- ===================== HOME ===================== -->
+  <section class="screen active" id="tab-home">
+    <div class="hero">
+      <div class="hero-top">
+        <div class="eyebrow" style="color:#fff; opacity:.85;">Xin chào 👋</div>
+        <h1 id="homeGreeting">Sẵn sàng học chưa?</h1>
+        <p id="homeSub">Gieo một hạt giống từ vựng mỗi ngày.</p>
+      </div>
+      <div class="due-ring" id="dueRing">
+        <div class="due-ring-inner">
+          <div class="due-ring-num" id="statDue">0</div>
+          <div class="due-ring-label">từ cần<br>ôn hôm nay</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bento-row">
+      <div class="card stat-card">
+        <div class="stat-num" id="statNew">0</div>
+        <div class="stat-label">Từ mới còn lại</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-num" id="statStreak">0 🔥</div>
+        <div class="stat-label">Chuỗi ngày học</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-num" id="statTotal">0</div>
+        <div class="stat-label">Tổng số từ</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin:0 0 10px;">Dự báo ôn tập 7 ngày tới</div>
+    <div class="card" style="padding:16px; margin-bottom:16px;">
+      <div class="home-forecast-chart" id="homeForecastChart"></div>
+      <div class="bar-label" id="homeForecastLabel"></div>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn btn-primary btn-block" onclick="goTab('review')">Ôn tập ngay</button>
+      <button class="btn btn-ghost btn-block" onclick="goTab('learn')">Học từ mới</button>
+    </div>
+  </section>
+
+  <!-- ===================== LEARN ===================== -->
+  <section class="screen" id="tab-learn">
+    <div id="learnTopics">
+      <input type="text" id="topicSearch" class="topic-search" placeholder="🔍 Tìm chủ đề..." oninput="renderTopicList()" style="margin-top:2px;">
+      <div class="pill" id="quickStatNew" style="margin-bottom:14px;">🌱 0 từ mới hôm nay</div>
+      <div class="mini-list" id="topicList"></div>
+    </div>
+    <div id="learnStudy" style="display:none;">
+      <div class="study-head">
+        <button class="icon-btn" onclick="backToTopicListFromStudy()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+        <div class="progress-track"><div class="progress-fill" id="learnProgress" style="width:0%"></div></div>
+        <span class="pill" id="learnCount">0/0</span>
+      </div>
+      <div id="learnArea"></div>
+    </div>
+  </section>
+
+  <!-- ===================== REVIEW ===================== -->
+  <section class="screen" id="tab-review">
+    <div id="reviewModes">
+      <p style="color:var(--ink-soft); font-size:13px; margin:2px 0 14px;">Ôn đúng lúc, nhớ lâu hơn</p>
+      <div id="reviewDueBanner"></div>
+      <button class="btn btn-primary btn-block" id="reviewMainCta" style="padding:18px; font-size:16px; margin-bottom:14px;" onclick="startReviewMode('flashcard')">🔁 Ôn tập hôm nay</button>
+      <div class="mini-list" id="reviewModeList" style="margin-bottom:16px;"></div>
+      <div class="section-title" style="margin:0 0 10px;">Chế độ ôn khác</div>
+      <div class="mode-switch-row" id="reviewModeSwitchRow"></div>
+    </div>
+    <div id="reviewStudy" style="display:none;">
+      <div class="study-head">
+        <button class="icon-btn" onclick="backToReviewModes()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+        <div class="progress-track"><div class="progress-fill" id="reviewProgress" style="width:0%"></div></div>
+        <span class="pill" id="reviewCount">0/0</span>
+      </div>
+      <div id="reviewArea"></div>
+    </div>
+  </section>
+
+  <!-- ===================== STATS ===================== -->
+  <section class="screen" id="tab-stats">
+    <div id="statsMain">
+    <p style="color:var(--ink-soft); font-size:13px; margin:2px 0 18px;">Hành trình học từ vựng của bạn</p>
+
+    <!-- 1. Streak -->
+    <div class="hero" style="margin-bottom:16px;">
+      <div class="row" style="align-items:flex-start; position:relative; z-index:1;">
+        <div>
+          <div class="eyebrow" style="color:#fff; opacity:.85;">Chuỗi ngày học</div>
+          <div style="font-family:'Fraunces',serif; font-size:40px; font-weight:600; line-height:1;" id="statStreakBig">0</div>
+          <div style="font-size:13px; opacity:.9; margin-top:4px;">ngày liên tiếp 🔥</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px; opacity:.8;">Kỷ lục</div>
+          <div style="font-family:'Fraunces',serif; font-size:22px; font-weight:600;" id="statBestStreakBig">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Tổng quan -->
+    <div class="section-title">Tổng quan</div>
+    <div class="bento-row" style="grid-template-columns:repeat(2,1fr); margin-bottom:16px;">
+      <div class="card stat-card"><div class="stat-num" id="ovTotal">0</div><div class="stat-label">📚 Tổng số từ</div></div>
+      <div class="card stat-card"><div class="stat-num" id="ovLearned">0</div><div class="stat-label">✅ Đã học</div></div>
+      <div class="card stat-card"><div class="stat-num" id="ovRemaining">0</div><div class="stat-label">⏳ Chưa học</div></div>
+      <div class="card stat-card"><div class="stat-num" id="ovCompletion">0%</div><div class="stat-label">🎯 Hoàn thành</div></div>
+    </div>
+
+    <!-- 3. Hôm nay -->
+    <div class="section-title">Hôm nay</div>
+    <div class="card" style="padding:16px; margin-bottom:16px;">
+      <div class="stat-row-lg"><span>Từ mới đã học</span><b id="todayLearned">0</b></div>
+      <div class="stat-row-lg"><span>Từ đã ôn</span><b id="todayReviewed">0</b></div>
+      <div class="stat-row-lg"><span>Thời gian học</span><b id="todayTime">0 phút</b></div>
+    </div>
+
+    <!-- Hiệu suất -->
+    <div class="section-title">Hiệu suất</div>
+    <div class="card" style="padding:16px; margin-bottom:16px;">
+      <div class="stat-row-lg"><span>Accuracy (% đúng)</span><b id="perfAccuracy">—</b></div>
+      <div class="stat-row-lg"><span>Từ quên hôm nay</span><b id="perfForgotToday">0</b></div>
+      <div style="margin-top:10px;">
+        <div class="back-label" style="margin-bottom:8px;">Tỉ lệ Again / Hard / Good / Easy</div>
+        <div class="grade-bar" id="gradeBar"></div>
+        <div class="grade-legend" id="gradeLegend"></div>
+      </div>
+    </div>
+
+    <!-- 4. Biểu đồ -->
+    <div class="section-title">
+      Biểu đồ học tập
+      <div class="seg-toggle" id="chartRangeToggle">
+        <button class="seg-btn active" data-range="7" onclick="setChartRange(7)">7 ngày</button>
+        <button class="seg-btn" data-range="30" onclick="setChartRange(30)">30 ngày</button>
+      </div>
+    </div>
+    <div class="card" style="padding:16px; margin-bottom:16px;">
+      <div class="bar-chart" id="barChart"></div>
+      <div class="bar-label" id="barLabel"></div>
+    </div>
+
+    <!-- 5. Tiến độ FSRS -->
+    <div class="section-title">Tiến độ ghi nhớ (FSRS)</div>
+    <div class="card" style="padding:16px; margin-bottom:16px; display:flex; align-items:center; gap:20px;">
+      <div class="donut-wrap"><div class="donut" id="fsrsDonut"></div></div>
+      <div class="donut-legend" id="fsrsLegend" style="flex:1;"></div>
+    </div>
+
+    <!-- 6. Từ yếu — compact summary card, tap for full detail screen -->
+    <div class="section-title">Từ yếu</div>
+    <div class="card topic-card" id="weakSummaryCard" onclick="showWeakDetail()" style="margin-bottom:16px;">
+      <div class="topic-emoji">🎯</div>
+      <div class="topic-info">
+        <div class="topic-name" id="weakSummaryCount">0 từ yếu</div>
+        <div class="topic-sub" id="weakSummarySub">Chưa nhớ ổn định, dễ quên</div>
+      </div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:var(--ink-soft);flex-shrink:0;"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+
+    <!-- 7. Thành tích -->
+    <div class="section-title">Thành tích</div>
+    <div class="achv-grid" id="achvGrid"></div>
+    </div>
+
+    <!-- Từ yếu — full detail screen -->
+    <div id="weakDetailScreen" style="display:none;">
+      <div class="study-head">
+        <button class="icon-btn" onclick="backToStatsMain()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></button>
+        <div style="flex:1; text-align:center; font-weight:800; font-size:15px;">🎯 Từ yếu</div>
+        <span style="width:38px;"></span>
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-bottom:16px;" id="weakReviewBtn" onclick="goReviewWeak()">Ôn ngay</button>
+      <div class="mini-list" id="weakFullList"></div>
+    </div>
+  </section>
+
+  <!-- ===================== SETTINGS ===================== -->
+  <section class="screen" id="tab-settings">
+    <p style="color:var(--ink-soft); font-size:13px; margin:2px 0 18px;">Tuỳ chỉnh trải nghiệm học tập</p>
+
+    <div class="settings-group">
+      <h3>Học tập</h3>
+      <div class="card">
+        <div class="setting-row">
+          <div><div class="lbl">Tự động phát âm</div><div class="sub">Đọc từ khi lật thẻ</div></div>
+          <div class="switch" id="swAutoSpeak" onclick="toggleSetting('autoSpeak',this)"><div class="knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div><div class="lbl">Tỉ lệ nhớ mục tiêu</div><div class="sub">Cao hơn = ôn nhiều hơn nhưng nhớ chắc hơn</div></div>
+          <div class="stepper">
+            <button onclick="changeRetention(-1)">−</button>
+            <span class="val" id="valRetention">90%</span>
+            <button onclick="changeRetention(1)">+</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div><div class="lbl">Làm nhiễu khoảng ôn (fuzz)</div><div class="sub">Tránh dồn nhiều từ vào cùng 1 ngày</div></div>
+          <div class="switch" id="swEnableFuzz" onclick="toggleSetting('enableFuzz',this)"><div class="knob"></div></div>
+        </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="openCardFieldsModal()">
+          <div><div class="lbl">🗂️ Thông tin hiển thị trên thẻ</div><div class="sub">Bật/tắt từng trường dữ liệu</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h3>Giao diện</h3>
+      <div class="card">
+        <div class="setting-row">
+          <div><div class="lbl">Chế độ tối</div><div class="sub">Bật để dùng giao diện nền tối</div></div>
+          <div class="switch" id="swDarkMode" onclick="toggleDarkMode()"><div class="knob"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h3>Dữ liệu</h3>
+      <div class="card">
+        <div class="setting-row" style="cursor:pointer;" onclick="openAddModal()">
+          <div class="lbl">➕ Thêm từ mới</div>
+        </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="openImportModal()">
+          <div class="lbl">📥 Nhập từ JSON (bổ sung từ)</div>
+        </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="exportData()">
+          <div class="lbl">📤 Xuất dữ liệu (sao lưu)</div>
+        </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="openRestoreModal()">
+          <div class="lbl">🔁 Khôi phục từ file sao lưu</div>
+        </div>
+        <div class="setting-row" style="cursor:pointer; color:var(--again);" onclick="confirmReset()">
+          <div class="lbl" style="color:var(--again);">🗑 Đặt lại toàn bộ tiến trình</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <h3>Thông tin</h3>
+      <div class="card">
+        <div class="setting-row">
+          <div class="lbl">Phiên bản</div>
+          <span class="sub">Vocab Sprout v1.0</span>
+        </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="window.location.href='mailto:?subject=Gop%20y%20Vocab%20Sprout'">
+          <div class="lbl">✉️ Góp ý / Liên hệ</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="text-align:center; font-size:11.5px; color:var(--ink-soft); margin-top:20px;">
+      Vocab Sprout · thuật toán lặp lại ngắt quãng FSRS‑6
+    </p>
+  </section>
+
+</div>
+
+<!-- Add word modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h3>Thêm từ mới</h3>
+    <p style="color:var(--ink-soft); font-size:12.5px; margin:0 0 14px;">Thêm một từ vào bộ thẻ của bạn</p>
+    <div class="field"><label>Từ tiếng Anh *</label><input type="text" id="fWord" placeholder="ví dụ: resilient"></div>
+    <div class="field"><label>Phiên âm IPA</label><input type="text" id="fIpa" placeholder="/rɪˈzɪliənt/"></div>
+    <div class="field"><label>Từ loại</label><input type="text" id="fPos" placeholder="adj / verb / noun ..."></div>
+    <div class="field"><label>Nghĩa tiếng Việt *</label><input type="text" id="fMeaning" placeholder="kiên cường, bền bỉ"></div>
+    <div class="field"><label>Câu ví dụ (tiếng Anh)</label><textarea id="fExample" rows="2" placeholder="She is resilient in the face of failure."></textarea></div>
+    <div class="field"><label>Dịch câu ví dụ</label><textarea id="fExampleVi" rows="2" placeholder="Cô ấy kiên cường khi đối mặt với thất bại."></textarea></div>
+    <div class="field"><label>Collocation (cách nhau bởi dấu phẩy)</label><input type="text" id="fCollocations" placeholder="remain resilient, resilient economy"></div>
+    <div class="field"><label>Từ đồng nghĩa</label><input type="text" id="fSynonyms" placeholder="tough, adaptable"></div>
+    <div class="field"><label>Từ trái nghĩa</label><input type="text" id="fAntonyms" placeholder="fragile"></div>
+    <div class="field"><label>Cấp độ CEFR</label><input type="text" id="fCefr" placeholder="A1 / A2 / B1 / B2..."></div>
+    <div class="field"><label>Lưu ý cách dùng</label><textarea id="fNote" rows="2" placeholder="Ví dụ: hay bị nhầm với từ..., dùng trang trọng..."></textarea></div>
+    <div class="field"><label>Chủ đề</label><input type="text" id="fTopic" placeholder="Tính cách"></div>
+    <button class="btn btn-primary btn-block" onclick="submitAddWord()">Lưu từ</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="closeModal('addModal')">Huỷ</button>
+  </div>
+</div>
+
+<!-- Import modal -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <h3>Nhập từ JSON</h3>
+    <p style="color:var(--ink-soft); font-size:12.5px; margin:0 0 14px;">Dán mảng JSON: [{"word","ipa","pos","meaning","example","exampleVi","collocations","synonyms","antonyms","topic"}] — collocations/synonyms/antonyms có thể là chuỗi cách nhau bởi dấu phẩy.</p>
+    <div class="field"><textarea id="fImport" rows="6" placeholder='[{"word":"abundant","pos":"adj","meaning":"dồi dào","example":"Water is abundant here.","exampleVi":"Nước ở đây rất dồi dào.","synonyms":"plentiful"}]'></textarea></div>
+    <button class="btn btn-primary btn-block" onclick="submitImport()">Nhập dữ liệu</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="closeModal('importModal')">Huỷ</button>
+  </div>
+</div>
+
+<!-- Confirm reset modal -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3>Xoá toàn bộ dữ liệu?</h3>
+    <p style="color:var(--ink-soft); font-size:13px; margin:0 0 18px;">Toàn bộ từ vựng, tiến trình học (FSRS) và thống kê sẽ bị xoá vĩnh viễn khỏi thiết bị này. Hành động này không thể hoàn tác.</p>
+    <button class="btn btn-block" style="background:var(--again); color:#fff;" onclick="performReset()">Xoá toàn bộ dữ liệu</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="closeModal('confirmModal')">Huỷ</button>
+  </div>
+</div>
+
+<!-- Restore data modal -->
+<div class="modal-overlay" id="restoreModal">
+  <div class="modal">
+    <h3>Khôi phục từ file sao lưu</h3>
+    <p style="color:var(--ink-soft); font-size:12.5px; margin:0 0 14px;">Dán nội dung file JSON đã xuất trước đó (nút "Xuất dữ liệu"). Việc này sẽ <b>thay thế toàn bộ</b> từ vựng và tiến trình hiện tại.</p>
+    <div class="field"><textarea id="fRestore" rows="6" placeholder='{"words": [...], "dailyLog": {...}}'></textarea></div>
+    <button class="btn btn-block" style="background:var(--again); color:#fff;" onclick="submitRestore()">Khôi phục (ghi đè dữ liệu hiện tại)</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:8px;" onclick="closeModal('restoreModal')">Huỷ</button>
+  </div>
+</div>
+
+<!-- Card fields visibility modal -->
+<div class="modal-overlay" id="cardFieldsModal">
+  <div class="modal">
+    <h3>Thông tin hiển thị trên thẻ</h3>
+    <p style="color:var(--ink-soft); font-size:12.5px; margin:0 0 14px;">Tắt bớt để mỗi lần ôn chỉ tập trung nhớ đúng 1 thứ — nghĩa của từ.</p>
+    <div class="setting-row"><div class="lbl">Từ loại (noun/verb...)</div><div class="switch" id="swShowPos" onclick="toggleSetting('showPos',this)"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="lbl">Phiên âm IPA</div><div class="switch" id="swShowIpa" onclick="toggleSetting('showIpa',this)"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="lbl">% Khả năng nhớ (🧠)</div><div class="switch" id="swShowRetrievability" onclick="toggleSetting('showRetrievability',this)"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="lbl">Câu ví dụ + dịch</div><div class="switch" id="swShowExample" onclick="toggleSetting('showExample',this)"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="lbl">Collocation</div><div class="switch" id="swShowCollocations" onclick="toggleSetting('showCollocations',this)"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="lbl">Từ đồng nghĩa</div><div class="switch" id="swShowSynonyms" onclick="toggleSetting('showSynonyms',this)"><div class="knob"></div></div></div>
+    <div class="setting-row"><div class="lbl">Từ trái nghĩa</div><div class="switch" id="swShowAntonyms" onclick="toggleSetting('showAntonyms',this)"><div class="knob"></div></div></div>
+    <div class="setting-row" style="border-bottom:none;"><div class="lbl">Ghi chú cách dùng</div><div class="switch" id="swShowNote" onclick="toggleSetting('showNote',this)"><div class="knob"></div></div></div>
+    <button class="btn btn-primary btn-block" style="margin-top:16px;" onclick="closeModal('cardFieldsModal')">Xong</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data/words.js"></script>
+<script src="js/fsrs.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
