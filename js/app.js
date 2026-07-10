@@ -4,7 +4,8 @@ let words = [];
 let settings = {
   theme:'', autoSpeak:false, desiredRetention:0.9, enableFuzz:true,
   showIpa:true, showPos:true, showRetrievability:true, showExample:true,
-  showCollocations:true, showSynonyms:true, showAntonyms:true, showNote:true
+  showCollocations:true, showSynonyms:true, showAntonyms:true, showNote:true,
+  dailyGoal:30
 };
 function fsrsOpts(){ return {retention: settings.desiredRetention||0.9, fuzz: settings.enableFuzz!==false}; }
 // Shared 4-grade rating row (Again/Hard/Good/Easy) for Learn & Review flashcards,
@@ -249,44 +250,69 @@ function overdueOrder(list){
   return Object.keys(buckets).sort((a,b)=>a-b).flatMap(k=>shuffleArr(buckets[k]));
 }
 
+function vnDateLine(){
+  const daysVi = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  return `${daysVi[d.getDay()]}, ${dd}/${mm}/${d.getFullYear()}`;
+}
+// Home's "Học ngay" jumps straight into the most useful action: clear due
+// reviews first (they're time-sensitive), otherwise go learn new words.
+function homeStartNow(){
+  if(getDueWords().length>0){ goTab('review'); startReviewMode('flashcard'); return; }
+  if(getNewWords().length>0){ goTab('learn'); return; }
+  showToast('Tuyệt vời! Bạn đã học hết rồi 🎉');
+}
+function groupByTopic(){
+  const byTopic = {};
+  words.forEach(w=>{
+    const t = w.topic||'Chung';
+    (byTopic[t] = byTopic[t] || []).push(w);
+  });
+  return byTopic;
+}
 function renderHome(){
   const due = getDueWords();
   const news = getNewWords();
-  document.getElementById('statDue').textContent = due.length;
-  document.getElementById('statNew').textContent = news.length;
-  document.getElementById('statTotal').textContent = words.length;
-  document.getElementById('statStreak').textContent = computeStreak()+' 🔥';
-
-  // due ring: how much of the learned pool is due right now
-  const learnedPool = words.filter(w=>w.state!=='new').length;
-  const duePct = learnedPool>0 ? Math.min(100, Math.round(due.length/learnedPool*100)) : 0;
-  document.getElementById('dueRing').style.background =
-    due.length>0
-      ? `conic-gradient(#fff ${duePct}%, rgba(255,255,255,.25) 0)`
-      : `rgba(255,255,255,.2)`;
-
-  // 7-day forecast: how many words become due each of the next 7 calendar days.
-  // Uses the same "due by end of day" boundary as getDueWords(), so the "Nay"
-  // bar always matches the ring above exactly — no more contradicting numbers.
-  const dayStart = startOfToday();
-  const fc = [0,0,0,0,0,0,0];
-  words.filter(w=>w.state!=='new').forEach(w=>{
-    const diff = Math.floor((w.due-dayStart)/86400000);
-    if(diff<=0) fc[0]++; // overdue + due today both land on "Nay"
-    else if(diff<7) fc[diff]++;
-  });
-  const fmax = Math.max(1,...fc);
-  document.getElementById('homeForecastChart').innerHTML = fc.map((c,i)=>
-    `<div class="bar${i===0?' today':''}" style="height:${Math.max(4,c/fmax*100)}%" title="${c}"></div>`
-  ).join('');
-  const days=[]; for(let i=0;i<7;i++) days.push(i===0?'Nay':'+'+i);
-  document.getElementById('homeForecastLabel').innerHTML = days.map(l=>`<span>${l}</span>`).join('');
+  const streak = computeStreak();
 
   const hour = new Date().getHours();
   document.getElementById('homeGreeting').textContent = hour<11?'Chào buổi sáng ☀️':hour<18?'Chào buổi chiều 🌤':'Chào buổi tối 🌙';
-  document.getElementById('homeSub').textContent = due.length>0
-    ? `Bạn có ${due.length} từ cần ôn hôm nay.`
-    : news.length>0 ? 'Chưa có từ cần ôn — học thêm từ mới nhé!' : 'Tuyệt vời! Bạn đã học hết bộ từ hiện tại.';
+  document.getElementById('homeDateLine').textContent = vnDateLine();
+  document.getElementById('homeStreakPill').textContent = `🔥 ${streak}`;
+
+  document.getElementById('homeDueNum').textContent = due.length;
+  document.getElementById('homeNewNum').textContent = news.length;
+
+  const goal = settings.dailyGoal||30;
+  const todayLog = dailyLog[todayKey()] || {};
+  const doneToday = todayLog.total||0;
+  const pct = goal>0 ? Math.min(100, Math.round(doneToday/goal*100)) : 0;
+  const minutes = Math.round((todayLog.timeMs||0)/60000);
+  document.getElementById('homeGoalText').textContent = `${doneToday}/${goal}`;
+  document.getElementById('homeProgressFill').style.width = pct+'%';
+  document.getElementById('homeProgressPct').textContent = pct+'%';
+  document.getElementById('homeProgressCount').textContent = `${doneToday} / ${goal} từ`;
+  document.getElementById('homeProgressMin').textContent = `${minutes} phút`;
+
+  document.getElementById('statTotal').textContent = words.length;
+  document.getElementById('statLearned').textContent = words.filter(w=>w.state==='review').length;
+  document.getElementById('statDue').textContent = due.length;
+  document.getElementById('statStreak').textContent = streak;
+
+  const byTopic = groupByTopic();
+  const topTopics = Object.keys(byTopic).map(t=>({t, stat:topicStatsFor(byTopic[t])}))
+    .sort((a,b)=> (b.stat.newCount+b.stat.dueCount)-(a.stat.newCount+a.stat.dueCount) || a.t.localeCompare(b.t))
+    .slice(0,5);
+  document.getElementById('homeTopicList').innerHTML = topTopics.length
+    ? topTopics.map(x=>topicCardHTML(x.t, byTopic[x.t])).join('')
+    : `<p style="color:var(--ink-soft); font-size:13px;">Chưa có chủ đề nào.</p>`;
+
+  const weak = getWeakWords().slice(0,5);
+  document.getElementById('homeWeakList').innerHTML = weak.length
+    ? weak.map(w=>weakItemHTML(w, 'goReviewWeak()')).join('')
+    : `<p style="color:var(--ink-soft); font-size:13px;">Không có từ yếu nào — làm tốt lắm! 🎉</p>`;
 }
 function computeStreak(){
   let streak=0; let d=new Date();
@@ -381,12 +407,31 @@ function topicCefrLabel(topicWords){
   levels.sort((a,b)=>counts[b]-counts[a]);
   return levels[0];
 }
+function topicCardHTML(t, topicWords){
+  const stat = topicStatsFor(topicWords);
+  const pct = stat.total? Math.round(stat.learned/stat.total*100) : 0;
+  const cefr = topicCefrLabel(topicWords);
+  let badges = [
+    stat.newCount>0 ? `<span class="topic-badge new">🟢 ${stat.newCount} mới</span>` : '',
+    stat.dueCount>0 ? `<span class="topic-badge due">🟠 ${stat.dueCount} ôn</span>` : '',
+  ].join('');
+  if(!badges) badges = `<span class="topic-badge flat">✓ Ổn định</span>`;
+  return `
+    <div class="card topic-card" onclick="startTopicFlashcard('${escJs(t)}')">
+      <div class="topic-emoji">${topicEmoji(t)}</div>
+      <div class="topic-info">
+        <div class="topic-name">${esc(t)}</div>
+        <div class="topic-meta">${stat.total} từ${cefr?` • ${esc(cefr)}`:''}</div>
+        <div class="topic-progress-row">
+          <div class="topic-progress-track"><div class="topic-progress-fill" style="width:${pct}%"></div></div>
+          <span class="topic-progress-num">${stat.learned}/${stat.total} từ</span>
+        </div>
+      </div>
+      <div class="topic-badges-corner">${badges}</div>
+    </div>`;
+}
 function renderTopicList(){
-  const byTopic = {};
-  words.forEach(w=>{
-    const t = w.topic||'Chung';
-    (byTopic[t] = byTopic[t] || []).push(w);
-  });
+  const byTopic = groupByTopic();
   let names = Object.keys(byTopic);
 
   // quick stat: total new (unlearned) words across the whole vocab
@@ -402,29 +447,7 @@ function renderTopicList(){
     list.innerHTML = `<div class="empty-state"><div class="em">🌾</div><h3 style="margin:0 0 6px;">${query?'Không tìm thấy chủ đề':'Chưa có từ nào'}</h3><p>${query?'Thử từ khoá khác nhé.':'Hãy thêm từ vựng trong Cài đặt để bắt đầu học.'}</p></div>`;
     return;
   }
-  list.innerHTML = names.map(t=>{
-    const stat = topicStatsFor(byTopic[t]);
-    const pct = stat.total? Math.round(stat.learned/stat.total*100) : 0;
-    const cefr = topicCefrLabel(byTopic[t]);
-    let badges = [
-      stat.newCount>0 ? `<span class="topic-badge new">🟢 ${stat.newCount} mới</span>` : '',
-      stat.dueCount>0 ? `<span class="topic-badge due">🟠 ${stat.dueCount} ôn</span>` : '',
-    ].join('');
-    if(!badges) badges = `<span class="topic-badge flat">✓ Ổn định</span>`;
-    return `
-    <div class="card topic-card" onclick="startTopicFlashcard('${escJs(t)}')">
-      <div class="topic-emoji">${topicEmoji(t)}</div>
-      <div class="topic-info">
-        <div class="topic-name">${esc(t)}</div>
-        <div class="topic-meta">${stat.total} từ${cefr?` • ${esc(cefr)}`:''}</div>
-        <div class="topic-progress-row">
-          <div class="topic-progress-track"><div class="topic-progress-fill" style="width:${pct}%"></div></div>
-          <span class="topic-progress-num">${stat.learned}/${stat.total} từ</span>
-        </div>
-      </div>
-      <div class="topic-badges-corner">${badges}</div>
-    </div>`;
-  }).join('');
+  list.innerHTML = names.map(t=>topicCardHTML(t, byTopic[t])).join('');
 }
 
 /* Tap a topic → jump straight into flashcard study, picking whichever
@@ -949,17 +972,20 @@ function backToStatsMain(){
   document.getElementById('weakDetailScreen').style.display='none';
   document.getElementById('statsMain').style.display='block';
 }
-function renderWeakDetailList(){
-  const weak = getWeakWords();
-  document.getElementById('weakReviewBtn').style.display = weak.length? 'block':'none';
-  document.getElementById('weakFullList').innerHTML = weak.length ? weak.map(w=>{
-    const acc = Math.round(wordAccuracy(w)*100);
-    return `
-    <div class="mini-item" style="padding:10px 12px; background:var(--bg-2); border-radius:12px;">
+function weakItemHTML(w, onclick){
+  const acc = Math.round(wordAccuracy(w)*100);
+  return `
+    <div class="mini-item" style="padding:10px 12px; background:var(--bg-2); border-radius:12px;${onclick?' cursor:pointer;':''}"${onclick?` onclick="${onclick}"`:''}>
       <div><div class="w">${esc(w.word)}</div><div class="m">${esc(w.meaning)}</div></div>
       <span class="topic-count zero" style="background:var(--again); color:#fff; text-align:right; line-height:1.25; padding:6px 10px;">Sai ${w.wrongCount||0}×<br><span style="font-weight:600; font-size:9.5px; opacity:.9;">${acc}% đúng</span></span>
     </div>`;
-  }).join('') : `<p style="color:var(--ink-soft); font-size:13px; margin:4px 0;">Không có từ yếu nào — làm tốt lắm! 🎉</p>`;
+}
+function renderWeakDetailList(){
+  const weak = getWeakWords();
+  document.getElementById('weakReviewBtn').style.display = weak.length? 'block':'none';
+  document.getElementById('weakFullList').innerHTML = weak.length
+    ? weak.map(w=>weakItemHTML(w)).join('')
+    : `<p style="color:var(--ink-soft); font-size:13px; margin:4px 0;">Không có từ yếu nào — làm tốt lắm! 🎉</p>`;
 }
 function renderStats(){
   document.getElementById('weakDetailScreen').style.display='none';

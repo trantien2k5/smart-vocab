@@ -37,45 +37,61 @@
 
   <!-- ===================== HOME ===================== -->
   <section class="screen active" id="tab-home">
-    <div class="hero">
-      <div class="hero-top">
-        <div class="eyebrow" style="color:#fff; opacity:.85;">Xin chào 👋</div>
-        <h1 id="homeGreeting">Sẵn sàng học chưa?</h1>
-        <p id="homeSub">Gieo một hạt giống từ vựng mỗi ngày.</p>
+    <!-- 1. Header -->
+    <div class="row" style="align-items:flex-start; margin-bottom:14px;">
+      <div>
+        <div class="eyebrow" id="homeGreeting" style="font-weight:800; font-size:15px;">Chào buổi sáng ☀️</div>
+        <div id="homeDateLine" style="font-size:12.5px; color:var(--ink-soft); margin-top:2px;"></div>
       </div>
-      <div class="due-ring" id="dueRing">
-        <div class="due-ring-inner">
-          <div class="due-ring-num" id="statDue">0</div>
-          <div class="due-ring-label">từ cần<br>ôn hôm nay</div>
+      <span class="pill" id="homeStreakPill">🔥 0</span>
+    </div>
+
+    <!-- 2. Hôm nay -->
+    <div class="hero" style="padding:18px;">
+      <div class="hero-top" style="position:relative; z-index:1;">
+        <div class="eyebrow" style="color:#fff; opacity:.85;">📅 Hôm nay</div>
+        <div style="display:flex; gap:22px; margin:8px 0 12px;">
+          <div>
+            <div style="font-family:'Fraunces',serif; font-size:26px; font-weight:600; line-height:1;" id="homeDueNum">0</div>
+            <div style="font-size:11px; opacity:.85; margin-top:3px;">từ cần ôn</div>
+          </div>
+          <div>
+            <div style="font-family:'Fraunces',serif; font-size:26px; font-weight:600; line-height:1;" id="homeNewNum">0</div>
+            <div style="font-size:11px; opacity:.85; margin-top:3px;">từ mới</div>
+          </div>
         </div>
+        <div style="font-size:12px; opacity:.9; margin-bottom:12px;">Mục tiêu hôm nay: <b id="homeGoalText">0/30</b></div>
+        <button class="btn btn-block" style="background:#fff; color:var(--sage-deep); padding:15px; font-size:15px; font-weight:800;" onclick="homeStartNow()">▶ Học ngay</button>
       </div>
     </div>
 
-    <div class="bento-row">
-      <div class="card stat-card">
-        <div class="stat-num" id="statNew">0</div>
-        <div class="stat-label">Từ mới còn lại</div>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-num" id="statStreak">0 🔥</div>
-        <div class="stat-label">Chuỗi ngày học</div>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-num" id="statTotal">0</div>
-        <div class="stat-label">Tổng số từ</div>
-      </div>
-    </div>
-
-    <div class="section-title" style="margin:0 0 10px;">Dự báo ôn tập 7 ngày tới</div>
+    <!-- 3. Tiến độ học -->
+    <div class="section-title">Tiến độ hôm nay</div>
     <div class="card" style="padding:16px; margin-bottom:16px;">
-      <div class="home-forecast-chart" id="homeForecastChart"></div>
-      <div class="bar-label" id="homeForecastLabel"></div>
+      <div class="progress-track" style="margin:0 0 10px;"><div class="progress-fill" id="homeProgressFill" style="width:0%"></div></div>
+      <div style="display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft);">
+        <span id="homeProgressPct">0%</span>
+        <span id="homeProgressCount">0 / 30 từ</span>
+        <span id="homeProgressMin">0 phút</span>
+      </div>
     </div>
 
-    <div class="cta-row">
-      <button class="btn btn-primary btn-block" onclick="goTab('review')">Ôn tập ngay</button>
-      <button class="btn btn-ghost btn-block" onclick="goTab('learn')">Học từ mới</button>
+    <!-- 4. Thống kê nhanh -->
+    <div class="section-title">Thống kê nhanh</div>
+    <div class="bento-row" style="grid-template-columns:repeat(2,1fr); margin-bottom:16px;">
+      <div class="card stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">📚 Tổng từ</div></div>
+      <div class="card stat-card"><div class="stat-num" id="statLearned">0</div><div class="stat-label">✅ Đã nhớ</div></div>
+      <div class="card stat-card"><div class="stat-num" id="statDue">0</div><div class="stat-label">⏰ Đến hạn</div></div>
+      <div class="card stat-card"><div class="stat-num" id="statStreak">0</div><div class="stat-label">🔥 Streak</div></div>
     </div>
+
+    <!-- 5. Chủ đề -->
+    <div class="section-title">📂 Chủ đề<button class="btn btn-ghost" style="padding:5px 12px; font-size:12px;" onclick="goTab('learn')">Xem tất cả</button></div>
+    <div class="mini-list" id="homeTopicList" style="margin-bottom:16px;"></div>
+
+    <!-- 6. Từ khó -->
+    <div class="section-title">💪 Từ khó<button class="btn btn-ghost" style="padding:5px 12px; font-size:12px;" onclick="goReviewWeak()">Luyện ngay</button></div>
+    <div class="mini-list" id="homeWeakList"></div>
   </section>
 
   <!-- ===================== LEARN ===================== -->
