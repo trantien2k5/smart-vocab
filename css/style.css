@@ -238,7 +238,7 @@ button{font-family:inherit;}
 .topic-progress-fill{height:100%; background:var(--grad-primary); border-radius:5px;}
 .topic-progress-num{font-size:11px; color:var(--ink-soft); font-weight:700; flex-shrink:0;}
 .topic-badges{display:flex; gap:6px; margin-top:7px; flex-wrap:wrap;}
-.topic-badges-corner{display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; width:82px; margin-left:8px;}
+.topic-badges-corner{display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; margin-left:8px;}
 .topic-badge{font-size:10px; font-weight:800; padding:3px 7px; border-radius:999px; white-space:nowrap;}
 .topic-badge.new{background:color-mix(in srgb, var(--good) 16%, transparent); color:var(--good);}
 .topic-badge.due{background:color-mix(in srgb, var(--amber) 18%, transparent); color:var(--hard);}
