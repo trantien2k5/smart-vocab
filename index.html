@@ -236,11 +236,17 @@
       <h3>Học tập</h3>
       <div class="card">
         <div class="setting-row">
-          <div><div class="lbl">Tự động phát âm</div><div class="sub">Đọc từ khi lật thẻ</div></div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="topic-emoji">🔊</div>
+            <div><div class="lbl">Tự động phát âm</div><div class="sub">Đọc từ khi lật thẻ</div></div>
+          </div>
           <div class="switch" id="swAutoSpeak" onclick="toggleSetting('autoSpeak',this)"><div class="knob"></div></div>
         </div>
         <div class="setting-row">
-          <div><div class="lbl">Tỉ lệ nhớ mục tiêu</div><div class="sub">Cao hơn = ôn nhiều hơn nhưng nhớ chắc hơn</div></div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="topic-emoji">🎯</div>
+            <div><div class="lbl">Tỉ lệ nhớ mục tiêu</div><div class="sub">Cao hơn = ôn nhiều hơn nhưng nhớ chắc hơn</div></div>
+          </div>
           <div class="stepper">
             <button onclick="changeRetention(-1)">−</button>
             <span class="val" id="valRetention">90%</span>
@@ -248,11 +254,17 @@
           </div>
         </div>
         <div class="setting-row">
-          <div><div class="lbl">Làm nhiễu khoảng ôn (fuzz)</div><div class="sub">Tránh dồn nhiều từ vào cùng 1 ngày</div></div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="topic-emoji">🎲</div>
+            <div><div class="lbl">Làm nhiễu khoảng ôn (fuzz)</div><div class="sub">Tránh dồn nhiều từ vào cùng 1 ngày</div></div>
+          </div>
           <div class="switch" id="swEnableFuzz" onclick="toggleSetting('enableFuzz',this)"><div class="knob"></div></div>
         </div>
         <div class="setting-row" style="cursor:pointer;" onclick="openCardFieldsModal()">
-          <div><div class="lbl">🗂️ Thông tin hiển thị trên thẻ</div><div class="sub">Bật/tắt từng trường dữ liệu</div></div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="topic-emoji">🗂️</div>
+            <div><div class="lbl">Thông tin hiển thị trên thẻ</div><div class="sub">Bật/tắt từng trường dữ liệu</div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -261,7 +273,10 @@
       <h3>Giao diện</h3>
       <div class="card">
         <div class="setting-row">
-          <div><div class="lbl">Chế độ tối</div><div class="sub">Bật để dùng giao diện nền tối</div></div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="topic-emoji">🌙</div>
+            <div><div class="lbl">Chế độ tối</div><div class="sub">Bật để dùng giao diện nền tối</div></div>
+          </div>
           <div class="switch" id="swDarkMode" onclick="toggleDarkMode()"><div class="knob"></div></div>
         </div>
       </div>
@@ -271,19 +286,19 @@
       <h3>Dữ liệu</h3>
       <div class="card">
         <div class="setting-row" style="cursor:pointer;" onclick="openAddModal()">
-          <div class="lbl">➕ Thêm từ mới</div>
+          <div style="display:flex; align-items:center; gap:12px;"><div class="topic-emoji">➕</div><div class="lbl">Thêm từ mới</div></div>
         </div>
         <div class="setting-row" style="cursor:pointer;" onclick="openImportModal()">
-          <div class="lbl">📥 Nhập từ JSON (bổ sung từ)</div>
+          <div style="display:flex; align-items:center; gap:12px;"><div class="topic-emoji">📥</div><div class="lbl">Nhập từ JSON (bổ sung từ)</div></div>
         </div>
         <div class="setting-row" style="cursor:pointer;" onclick="exportData()">
-          <div class="lbl">📤 Xuất dữ liệu (sao lưu)</div>
+          <div style="display:flex; align-items:center; gap:12px;"><div class="topic-emoji">📤</div><div class="lbl">Xuất dữ liệu (sao lưu)</div></div>
         </div>
         <div class="setting-row" style="cursor:pointer;" onclick="openRestoreModal()">
-          <div class="lbl">🔁 Khôi phục từ file sao lưu</div>
+          <div style="display:flex; align-items:center; gap:12px;"><div class="topic-emoji">🔁</div><div class="lbl">Khôi phục từ file sao lưu</div></div>
         </div>
         <div class="setting-row" style="cursor:pointer; color:var(--again);" onclick="confirmReset()">
-          <div class="lbl" style="color:var(--again);">🗑 Đặt lại toàn bộ tiến trình</div>
+          <div style="display:flex; align-items:center; gap:12px;"><div class="topic-emoji">🗑</div><div class="lbl" style="color:var(--again);">Đặt lại toàn bộ tiến trình</div></div>
         </div>
       </div>
     </div>
@@ -292,11 +307,11 @@
       <h3>Thông tin</h3>
       <div class="card">
         <div class="setting-row">
-          <div class="lbl">Phiên bản</div>
+          <div style="display:flex; align-items:center; gap:12px;"><div class="topic-emoji">ℹ️</div><div class="lbl">Phiên bản</div></div>
           <span class="sub">Vocab Sprout v1.0</span>
         </div>
         <div class="setting-row" style="cursor:pointer;" onclick="window.location.href='mailto:?subject=Gop%20y%20Vocab%20Sprout'">
-          <div class="lbl">✉️ Góp ý / Liên hệ</div>
+          <div style="display:flex; align-items:center; gap:12px;"><div class="topic-emoji">✉️</div><div class="lbl">Góp ý / Liên hệ</div></div>
         </div>
       </div>
     </div>
