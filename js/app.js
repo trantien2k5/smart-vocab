@@ -975,8 +975,12 @@ function backToStatsMain(){
 function weakItemHTML(w, onclick){
   const acc = Math.round(wordAccuracy(w)*100);
   return `
-    <div class="mini-item" style="padding:10px 12px; background:var(--bg-2); border-radius:12px;${onclick?' cursor:pointer;':''}"${onclick?` onclick="${onclick}"`:''}>
-      <div><div class="w">${esc(w.word)}</div><div class="m">${esc(w.meaning)}</div></div>
+    <div class="card topic-card${onclick?'':' disabled'}" ${onclick?`onclick="${onclick}"`:''}>
+      <div class="topic-emoji">🎯</div>
+      <div class="topic-info">
+        <div class="topic-name">${esc(w.word)}</div>
+        <div class="topic-sub">${esc(w.meaning)}</div>
+      </div>
       <span class="topic-count zero" style="background:var(--again); color:#fff; text-align:right; line-height:1.25; padding:6px 10px;">Sai ${w.wrongCount||0}×<br><span style="font-weight:600; font-size:9.5px; opacity:.9;">${acc}% đúng</span></span>
     </div>`;
 }
