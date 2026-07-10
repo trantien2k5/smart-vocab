@@ -84,11 +84,47 @@ function logStudyActivity(grade){
 }
 
 /* ============================= TTS ============================= */
+let ttsVoice = null;
+function pickBestVoice(){
+  const voices = window.speechSynthesis.getVoices();
+  if(!voices.length) return null;
+  const enVoices = voices.filter(v=>v.lang && v.lang.toLowerCase().startsWith('en'));
+  const pool = enVoices.length ? enVoices : voices;
+  // Prefer natural/neural/online engines (much less robotic than default local voices)
+  const rank = v=>{
+    const n = v.name.toLowerCase();
+    if(n.includes('natural')) return 0;
+    if(n.includes('neural') || n.includes('online')) return 1;
+    if(n.includes('google us english') || n.includes('google uk english')) return 2;
+    if(n.includes('samantha') || n.includes('aria') || n.includes('guy')) return 2;
+    if(n.includes('google')) return 3;
+    if(v.localService===false) return 4;
+    return 5;
+  };
+  return pool.slice().sort((a,b)=>rank(a)-rank(b))[0];
+}
+// Voice list loads async on first page interaction in some browsers, and the
+// very first speechSynthesis.speak() call has a noticeable startup delay
+// (esp. Chrome) — call this once when entering a flashcard session so the
+// voice is picked and the engine warmed up before the user taps play.
+function warmUpTTS(){
+  if(!('speechSynthesis' in window)) return;
+  const load = ()=>{ const v = pickBestVoice(); if(v) ttsVoice = v; };
+  load();
+  if(!ttsVoice) window.speechSynthesis.onvoiceschanged = load;
+  try{
+    const warm = new SpeechSynthesisUtterance(' ');
+    warm.volume = 0;
+    window.speechSynthesis.speak(warm);
+  }catch(e){}
+}
 function speak(text){
   if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang='en-US'; u.rate=0.92;
+  u.lang='en-US'; u.rate=0.92; u.pitch=1;
+  if(!ttsVoice) warmUpTTS();
+  if(ttsVoice){ u.voice = ttsVoice; u.lang = ttsVoice.lang || 'en-US'; }
   window.speechSynthesis.speak(u);
 }
 
@@ -405,6 +441,7 @@ function startLearnTopic(topic){
   document.getElementById('learnTopics').style.display='none';
   document.getElementById('learnStudy').style.display='block';
   setNavVisible(false);
+  warmUpTTS();
   drawLearnCard();
 }
 function startRelearnTopic(topic){
@@ -420,6 +457,7 @@ function startRelearnTopic(topic){
   document.getElementById('learnTopics').style.display='none';
   document.getElementById('learnStudy').style.display='block';
   setNavVisible(false);
+  warmUpTTS();
   drawLearnCard();
 }
 function backToTopicListFromStudy(){
@@ -442,6 +480,7 @@ function startTopicReview(topic){
   document.getElementById('reviewModes').style.display='none';
   document.getElementById('reviewStudy').style.display='block';
   setNavVisible(false);
+  warmUpTTS();
   drawReviewCard();
 }
 function drawLearnCard(){
@@ -577,6 +616,7 @@ function startReviewMode(mode){
   document.getElementById('reviewModes').style.display='none';
   document.getElementById('reviewStudy').style.display='block';
   setNavVisible(false);
+  warmUpTTS();
   drawReviewCard();
 }
 function startQuickPractice(){
@@ -594,6 +634,7 @@ function startQuickPractice(){
   document.getElementById('reviewModes').style.display='none';
   document.getElementById('reviewStudy').style.display='block';
   setNavVisible(false);
+  warmUpTTS();
   drawReviewCard();
 }
 function startWeakPractice(){
@@ -612,6 +653,7 @@ function startWeakPractice(){
   document.getElementById('reviewModes').style.display='none';
   document.getElementById('reviewStudy').style.display='block';
   setNavVisible(false);
+  warmUpTTS();
   drawReviewCard();
 }
 function backToReviewModes(){
